@@ -1,27 +1,28 @@
 ﻿using UnityEngine;
 using NUnit.Framework;
 using BarcodeScanner;
+using BarcodeScanner.Parser;
 
 [TestFixture]
-public class ScannerTest
+public class ParserTest
 {
 	#region Test Failure
 
 	[Test]
 	public void TestErrors()
 	{
-		IScanner scanner = new ZXingScanner();
-		string value = scanner.Decode(new Color32[0], 0, 0);
-		Assert.AreEqual(value.Length, 0);
+		IParser parser = new ZXingParser();
+		ParserResult result = parser.Decode(new Color32[0], 0, 0);
+		Assert.IsNull(result);
 	}
 
 	[Test]
 	public void TestEmpty()
 	{
-		IScanner scanner = new ZXingScanner();
+		IParser parser = new ZXingParser();
 		var image = Resources.Load<Texture2D>("standard");
-		string value = scanner.Decode(image.GetPixels32(), image.width, image.height);
-		Assert.AreEqual(value.Length, 0);
+		ParserResult result = parser.Decode(image.GetPixels32(), image.width, image.height);
+		Assert.IsNull(result);
 	}
 
 	#endregion
@@ -37,10 +38,10 @@ public class ScannerTest
 	[Test, TestCaseSource("ImageTests")]
 	public void TestCodes(string file)
 	{
-		IScanner scanner = new ZXingScanner();
+		IParser parser = new ZXingParser();
 		var image = Resources.Load<Texture2D>(file);
-		string value = scanner.Decode(image.GetPixels32(), image.width, image.height);
-		StringAssert.Contains("google", value.ToLowerInvariant());
+		ParserResult result = parser.Decode(image.GetPixels32(), image.width, image.height);
+		StringAssert.Contains("google", result.Value.ToLowerInvariant());
 	}
 
 	#endregion
@@ -53,12 +54,12 @@ public class ScannerTest
 	};
 
 	[Test, TestCaseSource("ImageSamples")]
-	public void TestSamples(string file, string result)
+	public void TestSamples(string file, string check)
 	{
-		IScanner scanner = new ZXingScanner();
+		IParser parser = new ZXingParser();
 		var image = Resources.Load<Texture2D>(file);
-		string value = scanner.Decode(image.GetPixels32(), image.width, image.height);
-		StringAssert.Contains(result, value.ToLowerInvariant());
+		ParserResult result = parser.Decode(image.GetPixels32(), image.width, image.height);
+		StringAssert.Contains(check, result.Value.ToLowerInvariant());
 	}
 
 	#endregion
