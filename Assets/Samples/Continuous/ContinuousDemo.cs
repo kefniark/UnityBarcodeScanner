@@ -1,5 +1,7 @@
 ﻿using BarcodeScanner;
 using BarcodeScanner.Scanner;
+using System;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -61,27 +63,33 @@ public class ContinuousDemo : MonoBehaviour {
 		}
 	}
 
-	/// <summary>
-	/// On destroy method from unity, stop the check thread (or leaving the scene)
-	/// </summary>
-	void OnDestroy()
-	{
-		if (BarcodeScanner == null)
-		{
-			Log.Warning("No valid camera - OnDestroy");
-			return;
-		}
-		Image = null;
-		BarcodeScanner.Destroy();
-		BarcodeScanner = null;
-	}
-
 	#region UI Buttons
 
 	public void ClickBack()
 	{
-		BarcodeScanner.Stop();
-		SceneManager.LoadScene("Boot");
+		// Try to stop the camera before loading another scene
+		StartCoroutine(StopCamera(() => {
+			SceneManager.LoadScene("Boot");
+		}));
+	}
+
+	/// <summary>
+	/// This coroutine is used because of a bug with unity (http://forum.unity3d.com/threads/closing-scene-with-active-webcamtexture-crashes-on-android-solved.363566/)
+	/// Trying to stop the camera in OnDestroy provoke random crash on Android
+	/// </summary>
+	/// <param name="callback"></param>
+	/// <returns></returns>
+	public IEnumerator StopCamera(Action callback)
+	{
+		// Stop Scanning
+		Image = null;
+		BarcodeScanner.Destroy();
+		BarcodeScanner = null;
+
+		// Wait a bit
+		yield return new WaitForSeconds(0.1f);
+
+		callback.Invoke();
 	}
 
 	#endregion
