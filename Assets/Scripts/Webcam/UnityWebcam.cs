@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Linq;
 using UnityEngine;
+using Wizcorp.Utils.Logger;
 
 namespace BarcodeScanner.Webcam
 {
@@ -8,36 +10,14 @@ namespace BarcodeScanner.Webcam
 		public Texture Texture { get { return Webcam; } }
 		public WebCamTexture Webcam { get; private set; }
 
-		public Vector2 WebcamSize {
+		public Vector2 Size {
 			get
 			{
 				return new Vector2(Webcam.width, Webcam.height);
 			}
 		}
-
-		public int Width
-		{
-			get
-			{
-				return Webcam.requestedWidth;
-			}
-			set
-			{
-				Webcam.requestedWidth = value;
-			}
-		}
-
-		public int Height
-		{
-			get
-			{
-				return Webcam.requestedHeight;
-			}
-			set
-			{
-				Webcam.requestedHeight = value;
-			}
-		}
+		public int Width {get; private set; }
+		public int Height  {get; private set; }
 
 		/// <summary>
 		/// 
@@ -46,12 +26,35 @@ namespace BarcodeScanner.Webcam
 		/// <param name="height"></param>
 		public UnityWebcam()
 		{
-			Webcam = new WebCamTexture();
+			if (WebCamTexture.devices.Length == 0)
+			{
+				throw new Exception("No Camera on this device");
+			}
+
+			// Init Camera
+			WebCamDevice selectCamera = WebCamTexture.devices.First();
+			Log.Info("Camera: " + selectCamera.name);
+
+			// Create Texture
+			Webcam = new WebCamTexture(selectCamera.name);
+			Webcam.requestedWidth = 512;
+			Webcam.requestedHeight = 512;
+			//Webcam.filterMode = FilterMode.Trilinear;
+
+			// Get size
+			Width = 0;
+			Height = 0;
+		}
+
+		public void SetSize()
+		{
+			Width = Mathf.RoundToInt(Webcam.width);
+			Height = Mathf.RoundToInt(Webcam.height);
 		}
 
 		public bool IsReady()
 		{
-			return Webcam != null;
+			return Webcam != null && Webcam.width >= 100;
 		}
 
 		public bool IsPlaying()
@@ -76,7 +79,12 @@ namespace BarcodeScanner.Webcam
 
 		public float GetRotation()
 		{
-			return Webcam.videoRotationAngle;
+			int rotation = -Webcam.videoRotationAngle;
+			if (Webcam.videoVerticallyMirrored)
+			{
+				rotation += 180;
+			}
+			return rotation;
 		}
 	}
 }

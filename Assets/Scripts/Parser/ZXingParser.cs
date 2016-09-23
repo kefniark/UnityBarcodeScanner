@@ -1,5 +1,6 @@
 ﻿using System;
 using UnityEngine;
+using Wizcorp.Utils.Logger;
 using ZXing;
 
 namespace BarcodeScanner.Parser
@@ -13,7 +14,7 @@ namespace BarcodeScanner.Parser
 			Scanner = new BarcodeReader();
 			Scanner.AutoRotate = true;
 			Scanner.TryInverted = true;
-			Scanner.Options.TryHarder = true;
+			//Scanner.Options.TryHarder = true;
 		}
 
 		/// <summary>
@@ -36,7 +37,7 @@ namespace BarcodeScanner.Parser
 			}
 			catch (Exception e)
 			{
-				Debug.LogError(e);
+				Log.Error(e);
 			}
 			
 			return value;

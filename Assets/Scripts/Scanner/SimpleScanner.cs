@@ -3,13 +3,20 @@ using System.Threading;
 using BarcodeScanner.Parser;
 using BarcodeScanner.Webcam;
 using UnityEngine;
+using Wizcorp.Utils.Logger;
+using ZXing;
 
 namespace BarcodeScanner.Scanner
 {
-	public class SimpleScanner : IScanner
+	public class Scanner : IScanner
 	{
 		//
+		public event EventHandler OnReady;
 		public event EventHandler StatusChanged;
+
+		public IWebcam Camera { get; private set; }
+		public IParser Parser { get; private set; }
+
 		private ScannerStatus status;
 		public ScannerStatus Status {
 			get
@@ -25,18 +32,18 @@ namespace BarcodeScanner.Scanner
 				}
 			}
 		}
-		public IWebcam Camera { get; private set; }
-		public IParser Parser { get; private set; }
+		
 
 		//
-		private Color32[] Pixels = null;
-		private int cameraWidth, cameraHeight = 0;
+		private BarcodeReader scanner = new BarcodeReader();
+		private Color32[] pixels = new Color32[0];
+
 		//
-		private Thread CodeScannerThread;
+		
 		private Action<string, string> Callback;
 		private ParserResult Result;
 
-		public SimpleScanner(IParser parser = null, IWebcam webcam = null)
+		public Scanner(IParser parser = null, IWebcam webcam = null)
 		{
 			Status = ScannerStatus.Initialize;
 			Parser = (parser == null) ? new ZXingParser() : parser;
@@ -47,12 +54,12 @@ namespace BarcodeScanner.Scanner
 		{
 			if (Callback != null)
 			{
-				Debug.LogWarning("Already Scan");
+				Log.Warning("Already Scan");
 				return;
 			}
 			Callback = callback;
 
-			Debug.Log("SimpleScanner -> Start Scan");
+			Log.Info("SimpleScanner -> Start Scan");
 			Status = ScannerStatus.Running;
 			CodeScannerThread = new Thread(DecodeQR);
 			CodeScannerThread.Start();
@@ -62,12 +69,12 @@ namespace BarcodeScanner.Scanner
 		{
 			if (Callback == null)
 			{
-				Debug.LogWarning("No Scan running");
+				Log.Warning("No Scan running");
 				return;
 			}
 
 			// Stop thread / Clean callback
-			Debug.Log("SimpleScanner -> Stop Scan");
+			Log.Info("SimpleScanner -> Stop Scan");
 			if (CodeScannerThread != null)
 			{
 				CodeScannerThread.Abort();
@@ -76,94 +83,75 @@ namespace BarcodeScanner.Scanner
 			Status = ScannerStatus.Paused;
 		}
 
+		#region Background Thread
+
+		private Thread CodeScannerThread;
+
 		public void DecodeQR()
 		{
 			while (Result == null)
 			{
 				// Wait
-				if (Pixels == null || cameraWidth == 0 || cameraHeight == 0)
+				if (Status != ScannerStatus.Running || pixels.Length == 00 || Camera.Width == 0)
 				{
 					Thread.Sleep(100);
 					continue;
 				}
 
 				// Process
-				Debug.Log("SimpleScanner -> Scan ... " + cameraWidth + " / " + cameraHeight);
+				Log.Info("SimpleScanner -> Scan ... " + Camera.Width + " / " + Camera.Height);
 				try
 				{
-					Result = Parser.Decode(Pixels, cameraWidth, cameraHeight);
-					Pixels = null;
+					Result = Parser.Decode(pixels, Camera.Width, Camera.Height);
+					pixels = null;
 
 					// Sleep a little bit and set the signal to get the next frame
-					Thread.Sleep(250);
+					Thread.Sleep(100);
 				}
 				catch (Exception e)
 				{
-					Debug.LogError(e);
+					Log.Error(e);
 				}
 			}
 		}
 
-		
+		#endregion
 
 		public void Update()
 		{
-			if (Camera.IsReady() && Camera.IsPlaying())
+			if (!Camera.IsReady())
 			{
-				//SetBestResolution();
-
-				cameraWidth = Camera.Width;
-				cameraHeight = Camera.Height;
-				Pixels = Camera.GetPixels();
-
-				if (Status == ScannerStatus.Initialize)
+				Log.Info("Camera Not Ready Yet ...");
+				if (status != ScannerStatus.Initialize)
 				{
-					Status = ScannerStatus.Paused;
+					Status = ScannerStatus.Initialize;
 				}
-			}
-			else
-			{
-				Pixels = null;
-			}
-
-			if (Result != null)
-			{
-				Debug.LogWarning(Result);
-				Status = ScannerStatus.Paused;
-
-				// Call callback
-				Callback(Result.Type, Result.Value);
-
-				// Clean
-				Callback = null;
-				Result = null;
-			}
-		}
-
-		/*
-		private void SetBestResolution()
-		{
-			int maxDimension = 512;
-			if (Camera.Width != 0 || Camera.WebcamSize.x < 100)
-			{
 				return;
 			}
 
-			float ratio = Camera.WebcamSize.x / Camera.WebcamSize.y;
-			if (ratio > 1)
+			if (Status == ScannerStatus.Initialize)
 			{
-				Camera.Width = maxDimension;
-				Camera.Height = Mathf.RoundToInt((float)maxDimension / ratio);
-			}
-			else
-			{
-				Camera.Width = Mathf.RoundToInt((float)maxDimension * ratio);
-				Camera.Height = maxDimension;
+				Status = ScannerStatus.Paused;
+
+				Camera.SetSize();
+				if (OnReady != null)
+				{
+					OnReady.Invoke(this, EventArgs.Empty);
+				}
 			}
 
-			Camera.Stop();
-			Camera.Play();
+			if (Status == ScannerStatus.Running)
+			{
+				pixels = Camera.GetPixels();
+
+				if (Result != null)
+				{
+					// Call callback
+					Callback(Result.Type, Result.Value);
+					Result = null;
+					pixels = new Color32[0];
+				}
+			}
 		}
-		*/
 	}
 }

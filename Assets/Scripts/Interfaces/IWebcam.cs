@@ -6,11 +6,11 @@ namespace BarcodeScanner
 	{
 		// 
 		Texture Texture { get; }
-		Vector2 WebcamSize { get; }
-		int Width { get; set; }
-		int Height { get; set; }
+		int Width { get; }
+		int Height { get; }
 
 		//
+		void SetSize();
 		bool IsReady();
 		bool IsPlaying();
 		void Play();

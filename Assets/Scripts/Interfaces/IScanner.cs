@@ -6,6 +6,8 @@ namespace BarcodeScanner
 	public interface IScanner
 	{
 		event EventHandler StatusChanged;
+		event EventHandler OnReady;
+
 		ScannerStatus Status { get; }
 
 		IParser Parser { get; }
