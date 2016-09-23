@@ -19,17 +19,19 @@ public class SimpleDemo : MonoBehaviour {
 
 		// Display the camera texture through a RawImage
 		BarcodeScanner.OnReady += (sender, arg) => {
-			Log.Info("On Ready");
 			Image.transform.localEulerAngles = new Vector3(0f, 0f, BarcodeScanner.Camera.GetRotation());
 			Image.texture = BarcodeScanner.Camera.Texture;
 		};
 
-		// Detect Match
+		// Track status of the scanner
 		BarcodeScanner.StatusChanged += (sender, arg) => {
 			TextHeader.text = "Status: " + BarcodeScanner.Status;
 		};
 	}
 
+	/// <summary>
+	/// The Update method from unity need to be propagated to the scanner
+	/// </summary>
 	void Update()
 	{
 		if (BarcodeScanner == null)
@@ -39,6 +41,9 @@ public class SimpleDemo : MonoBehaviour {
 		BarcodeScanner.Update();
 	}
 
+	/// <summary>
+	/// On destroy method from unity, stop the check thread (or leaving the scene)
+	/// </summary>
 	void OnDestroy()
 	{
 		if (BarcodeScanner == null)
@@ -46,7 +51,12 @@ public class SimpleDemo : MonoBehaviour {
 			Log.Warning("No valid camera - OnDestroy");
 			return;
 		}
-		BarcodeScanner.Stop();
+
+		// Stop Scanning
+		Image = null;
+		BarcodeScanner.Destroy();
+		BarcodeScanner = null;
+		
 	}
 
 	#region UI Buttons
@@ -58,12 +68,12 @@ public class SimpleDemo : MonoBehaviour {
 			Log.Warning("No valid camera - Click Start");
 			return;
 		}
-		BarcodeScanner.Scan((barCodeType, barCodeValue) => {
-			Log.Warning("Type: " + barCodeType);
-			Log.Warning("Value: " + barCodeValue);
 
-			TextHeader.text = "Found: " + barCodeType + " / " + barCodeValue;
+		// Start Scanning
+		BarcodeScanner.Scan((barCodeType, barCodeValue) => {
+			BarcodeScanner.Stop();
 			Audio.Play();
+			TextHeader.text = "Found: " + barCodeType + " / " + barCodeValue;
 		});
 	}
 
@@ -74,6 +84,8 @@ public class SimpleDemo : MonoBehaviour {
 			Log.Warning("No valid camera - Click Stop");
 			return;
 		}
+
+		// Stop Scanning
 		BarcodeScanner.Stop();
 	}
 

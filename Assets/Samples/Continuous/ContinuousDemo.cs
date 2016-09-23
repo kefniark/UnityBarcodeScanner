@@ -20,13 +20,32 @@ public class ContinuousDemo : MonoBehaviour {
 
 		// Display the camera texture through a RawImage
 		BarcodeScanner.OnReady += (sender, arg) => {
-			Log.Info("On Ready");
 			Image.transform.localEulerAngles = new Vector3(0f, 0f, BarcodeScanner.Camera.GetRotation());
 			Image.texture = BarcodeScanner.Camera.Texture;
 			RestartTime = Time.realtimeSinceStartup;
 		};
 	}
 
+	/// <summary>
+	/// Start a scan and wait for the callback (wait 1s after a scan success to avoid scanning multiple time the same element)
+	/// </summary>
+	private void StartScanner()
+	{
+		BarcodeScanner.Scan((barCodeType, barCodeValue) => {
+			BarcodeScanner.Stop();
+			if (TextHeader.text.Length > 250)
+			{
+				TextHeader.text = "";
+			}
+			TextHeader.text += "Found: " + barCodeType + " / " + barCodeValue + "\n";
+			RestartTime += Time.realtimeSinceStartup + 1f;
+			Audio.Play();
+		});
+	}
+
+	/// <summary>
+	/// The Update method from unity need to be propagated
+	/// </summary>
 	void Update()
 	{
 		if (BarcodeScanner != null)
@@ -34,23 +53,17 @@ public class ContinuousDemo : MonoBehaviour {
 			BarcodeScanner.Update();
 		}
 
+		// Check if the Scanner need to be started or restarted
 		if (RestartTime != 0 && RestartTime < Time.realtimeSinceStartup)
 		{
-			// Check Scan
-			BarcodeScanner.Scan((barCodeType, barCodeValue) => {
-				BarcodeScanner.Stop();
-				if (TextHeader.text.Length > 250)
-				{
-					TextHeader.text = "";
-				}
-				TextHeader.text += "Found: " + barCodeType + " / " + barCodeValue + "\n";
-				RestartTime += Time.realtimeSinceStartup + 1f;
-				Audio.Play();
-			});
+			StartScanner();
 			RestartTime = 0;
 		}
 	}
 
+	/// <summary>
+	/// On destroy method from unity, stop the check thread (or leaving the scene)
+	/// </summary>
 	void OnDestroy()
 	{
 		if (BarcodeScanner == null)
@@ -58,12 +71,18 @@ public class ContinuousDemo : MonoBehaviour {
 			Log.Warning("No valid camera - OnDestroy");
 			return;
 		}
-		BarcodeScanner.Stop();
+		Image = null;
+		BarcodeScanner.Destroy();
+		BarcodeScanner = null;
 	}
+
+	#region UI Buttons
 
 	public void ClickBack()
 	{
 		BarcodeScanner.Stop();
 		SceneManager.LoadScene("Boot");
 	}
+
+	#endregion
 }
