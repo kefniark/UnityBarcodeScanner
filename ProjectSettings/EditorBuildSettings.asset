@@ -4,4 +4,10 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes: []
+  m_Scenes:
+  - enabled: 1
+    path: Assets/Samples/Boot.unity
+  - enabled: 1
+    path: Assets/Samples/Simple/SimpleDemo.unity
+  - enabled: 1
+    path: Assets/Samples/Continuous/ContinuousDemo.unity

@@ -1,16 +1,23 @@
 ﻿using System;
 using UnityEngine;
+using Wizcorp.Utils.Logger;
 using ZXing;
 
-namespace BarcodeScanner
+namespace BarcodeScanner.Parser
 {
-	public class ZXingScanner : IScanner
+	public class ZXingParser : IParser
 	{
 		public BarcodeReader Scanner { get; private set; }
 
-		public ZXingScanner()
+		public ZXingParser()
 		{
 			Scanner = new BarcodeReader();
+			Scanner.AutoRotate = true;
+			Scanner.TryInverted = true;
+
+			#if UNITY_STANDALONE || UNITY_EDITOR
+			Scanner.Options.TryHarder = true;
+			#endif
 		}
 
 		/// <summary>
@@ -20,20 +27,20 @@ namespace BarcodeScanner
 		/// <param name="width"></param>
 		/// <param name="height"></param>
 		/// <returns></returns>
-		public string Decode(Color32[] colors, int width, int height)
+		public ParserResult Decode(Color32[] colors, int width, int height)
 		{
-			var value = string.Empty;
+			ParserResult value = null;
 			try
 			{
 				var result = Scanner.Decode(colors, width, height);
 				if (result != null)
 				{
-					value = result.Text;
+					value = new ParserResult(result.BarcodeFormat.ToString(), result.Text);
 				}
 			}
 			catch (Exception e)
 			{
-				Debug.LogError(e);
+				Log.Error(e);
 			}
 			
 			return value;
