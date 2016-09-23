@@ -6,4 +6,8 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Samples/Demo.unity
+    path: Assets/Samples/Boot.unity
+  - enabled: 1
+    path: Assets/Samples/Simple/SimpleDemo.unity
+  - enabled: 1
+    path: Assets/Samples/Continuous/ContinuousDemo.unity
