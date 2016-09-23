@@ -72,6 +72,16 @@ namespace BarcodeScanner.Webcam
 			Webcam.Stop();
 		}
 
+		public void Destroy()
+		{
+			Log.Info("Destroy Camera");
+			if (Webcam.isPlaying)
+			{
+				Webcam.Stop();
+			}
+			GameObject.DestroyImmediate(Webcam, true);
+		}
+
 		public Color32[] GetPixels()
 		{
 			return Webcam.GetPixels32();

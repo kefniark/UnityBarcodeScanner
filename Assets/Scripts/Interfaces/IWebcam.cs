@@ -15,6 +15,7 @@ namespace BarcodeScanner
 		bool IsPlaying();
 		void Play();
 		void Stop();
+		void Destroy();
 
 		//
 		Color32[] GetPixels();

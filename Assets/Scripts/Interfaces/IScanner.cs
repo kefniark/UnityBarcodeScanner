@@ -15,8 +15,8 @@ namespace BarcodeScanner
 
 		void Scan(Action<string, string> Callback);
 		void Stop();
-
 		void Update();
+		void Destroy();
 
 	}
 }
