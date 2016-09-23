@@ -29,6 +29,11 @@ namespace BarcodeScanner.Parser
 		/// <returns></returns>
 		public ParserResult Decode(Color32[] colors, int width, int height)
 		{
+			if (colors == null || colors.Length == 0 || width == 0 || height == 0)
+			{
+				return null;
+			}
+
 			ParserResult value = null;
 			try
 			{

@@ -29,19 +29,25 @@ public class ParserTest
 
 	#region Test Barcode Types
 
-	static string[] ImageTests = {
-		"code_39",
-		"code_128",
-		"code_qr"
+	private static object[] ImageTests = {
+		// 1D
+		new object[] { "code_39", "google"},
+		new object[] { "code_128", "google"},
+		new object[] { "code_isbn", "9783161484100" },
+
+		// 2D
+		new object[] { "code_qr", "google"},
+		new object[] { "code_datamatrix", "google"},
+		new object[] { "code_aztec", "google"}
 	};
 
 	[Test, TestCaseSource("ImageTests")]
-	public void TestCodes(string file)
+	public void TestCodes(string file, string check)
 	{
 		IParser parser = new ZXingParser();
 		var image = Resources.Load<Texture2D>(file);
 		ParserResult result = parser.Decode(image.GetPixels32(), image.width, image.height);
-		StringAssert.Contains("google", result.Value.ToLowerInvariant());
+		StringAssert.Contains(check, result.Value.ToLowerInvariant());
 	}
 
 	#endregion

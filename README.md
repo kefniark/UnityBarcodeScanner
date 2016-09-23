@@ -7,6 +7,9 @@ On the Asset Store, few library are already providing that, but they are expensi
 So, I just want to do something simple, readable, cross-plateform and open source.
 * Tested with Unity `5.3.x`, `5.4.x`
 * Tested on `PC`, `Mac`, `Android`, `WebGL`
+* Tested with the following barcode format:
+  * 1D : `Code 39`, `Code 128`, `ISBN`
+  * 2D : `QR Code`, `Aztec`, `Data Matrix`
 
 # How it's working ?
 This project is a Unity Project that you can open directly.
