@@ -145,8 +145,6 @@ namespace BarcodeScanner.Scanner
 			Camera.Destroy();
 			Camera = null;
 			Parser = null;
-
-			GC.Collect();
 		}
 
 		#region Unthread

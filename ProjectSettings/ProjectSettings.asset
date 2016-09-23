@@ -10,8 +10,8 @@ PlayerSettings:
   targetDevice: 2
   useOnDemandResources: 0
   accelerometerFrequency: 60
-  companyName: DefaultCompany
-  productName: TestUnity
+  companyName: Ganbaranai Corp
+  productName: Unity Barcode Scanner
   defaultCursor: {fileID: 0}
   cursorHotspot: {x: 0, y: 0}
   m_SplashScreenStyle: 0
@@ -180,7 +180,7 @@ PlayerSettings:
   - m_BuildTarget: 
     m_Icons:
     - serializedVersion: 2
-      m_Icon: {fileID: 0}
+      m_Icon: {fileID: 2800000, guid: 60d2975bb2afebd47acc02b4371f441e, type: 3}
       m_Width: 128
       m_Height: 128
   m_BuildTargetBatching: []
@@ -343,7 +343,8 @@ PlayerSettings:
   psp2UseDebugIl2cppLibs: 0
   psmSplashimage: {fileID: 0}
   spritePackerPolicy: 
-  scriptingDefineSymbols: {}
+  scriptingDefineSymbols:
+    13: 
   metroPackageName: TestUnity
   metroPackageVersion: 
   metroCertificatePath: 

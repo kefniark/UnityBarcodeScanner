@@ -14,7 +14,10 @@ namespace BarcodeScanner.Parser
 			Scanner = new BarcodeReader();
 			Scanner.AutoRotate = true;
 			Scanner.TryInverted = true;
-			//Scanner.Options.TryHarder = true;
+
+			#if UNITY_STANDALONE || UNITY_EDITOR
+			Scanner.Options.TryHarder = true;
+			#endif
 		}
 
 		/// <summary>

@@ -33,13 +33,12 @@ namespace BarcodeScanner.Webcam
 
 			// Init Camera
 			WebCamDevice selectCamera = WebCamTexture.devices.First();
-			Log.Info("Camera: " + selectCamera.name);
 
-			// Create Texture
+			// Create Texture (512x512 is the max resolution, the camera will try to get the closer resolution possible)
 			Webcam = new WebCamTexture(selectCamera.name);
 			Webcam.requestedWidth = 512;
 			Webcam.requestedHeight = 512;
-			//Webcam.filterMode = FilterMode.Trilinear;
+			Webcam.filterMode = FilterMode.Trilinear;
 
 			// Get size
 			Width = 0;
@@ -50,6 +49,7 @@ namespace BarcodeScanner.Webcam
 		{
 			Width = Mathf.RoundToInt(Webcam.width);
 			Height = Mathf.RoundToInt(Webcam.height);
+			Log.Info(string.Format("Camera {2} | Resolution {0}x{1}", Width, Height, Webcam.deviceName));
 		}
 
 		public bool IsReady()
@@ -74,12 +74,10 @@ namespace BarcodeScanner.Webcam
 
 		public void Destroy()
 		{
-			Log.Info("Destroy Camera");
 			if (Webcam.isPlaying)
 			{
 				Webcam.Stop();
 			}
-			GameObject.DestroyImmediate(Webcam, true);
 		}
 
 		public Color32[] GetPixels()
