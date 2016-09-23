@@ -56,8 +56,11 @@ public class SimpleDemo : MonoBehaviour {
 		// Start Scanning
 		BarcodeScanner.Scan((barCodeType, barCodeValue) => {
 			BarcodeScanner.Stop();
-			Audio.Play();
 			TextHeader.text = "Found: " + barCodeType + " / " + barCodeValue;
+
+			// Feedback
+			Audio.Play();
+			Handheld.Vibrate();
 		});
 	}
 
