@@ -8,6 +8,11 @@
 # Install
 You can reuse this library in any recent unity project:
 
+## Manually
+Download the project: https://github.com/kefniark/UnityBarcodeScanner/zipball/master
+And just copy the `Assets/Scripts` folder into your project.
+The code use namespaces, so they shouldn't conflict with anything else.
+
 ## Unity Package
 Soon ...
 
@@ -18,13 +23,5 @@ git remote add BarcodeScanner git@github.com:kefniark/UnityBarcodeScanner.git
 git fetch BarcodeScanner
 git read-tree --prefix=Assets/Libraries/BarcodeScanner -u BarcodeScanner/master:Assets/Scripts
 ```
-and for later update
-```bash
- git pull -s subtree BarcodeScanner master
- ```
 Here is a example with read-tree (that just copy the code).
 You can achieve the same kind of operation with `git subtree` or `git submodule`
-
-## Manually
-Just copy the Scripts folder into your project.
-These files use namespaces, so they shouldn't conflict with anything else.

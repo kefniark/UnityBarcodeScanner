@@ -60,7 +60,10 @@ public class SimpleDemo : MonoBehaviour {
 
 			// Feedback
 			Audio.Play();
+
+			#if UNITY_ANDROID || UNITY_IOS
 			Handheld.Vibrate();
+			#endif
 		});
 	}
 
