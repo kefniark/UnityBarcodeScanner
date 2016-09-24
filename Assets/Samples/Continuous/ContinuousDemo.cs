@@ -5,7 +5,6 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-using Wizcorp.Utils.Logger;
 
 public class ContinuousDemo : MonoBehaviour {
 
@@ -44,7 +43,10 @@ public class ContinuousDemo : MonoBehaviour {
 
 			// Feedback
 			Audio.Play();
+
+			#if UNITY_ANDROID || UNITY_IOS
 			Handheld.Vibrate();
+			#endif
 		});
 	}
 
