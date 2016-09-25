@@ -31,5 +31,10 @@ public class Boot : MonoBehaviour
 		SceneManager.LoadScene("ContinuousDemo");
 	}
 
+	public void OnSwitchCamera()
+	{
+		SceneManager.LoadScene("SwitchDemo");
+	}
+
 	#endregion
 }
