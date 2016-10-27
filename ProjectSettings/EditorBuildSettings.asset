@@ -11,3 +11,5 @@ EditorBuildSettings:
     path: Assets/Samples/Simple/SimpleDemo.unity
   - enabled: 1
     path: Assets/Samples/Continuous/ContinuousDemo.unity
+  - enabled: 1
+    path: Assets/Samples/Switch/SwitchDemo.unity

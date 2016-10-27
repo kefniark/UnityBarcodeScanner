@@ -7,6 +7,8 @@ namespace BarcodeScanner.Webcam
 {
 	public class UnityWebcam : IWebcam
 	{
+		public event EventHandler OnInitialized;
+
 		public Texture Texture { get { return Webcam; } }
 		public WebCamTexture Webcam { get; private set; }
 
@@ -22,9 +24,8 @@ namespace BarcodeScanner.Webcam
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="width"></param>
-		/// <param name="height"></param>
-		public UnityWebcam()
+		/// <param name="selectCamera"></param>
+		public UnityWebcam(string selectCamera = "")
 		{
 			if (WebCamTexture.devices.Length == 0)
 			{
@@ -32,10 +33,13 @@ namespace BarcodeScanner.Webcam
 			}
 
 			// Init Camera
-			WebCamDevice selectCamera = WebCamTexture.devices.First();
+			if (string.IsNullOrEmpty(selectCamera))
+			{
+				selectCamera = WebCamTexture.devices.First().name;
+			}
 
 			// Create Texture (512x512 is the max resolution, the camera will try to get the closer resolution possible)
-			Webcam = new WebCamTexture(selectCamera.name);
+			Webcam = new WebCamTexture(selectCamera);
 			Webcam.requestedWidth = 512;
 			Webcam.requestedHeight = 512;
 			Webcam.filterMode = FilterMode.Trilinear;
@@ -93,6 +97,11 @@ namespace BarcodeScanner.Webcam
 				rotation += 180;
 			}
 			return rotation;
+		}
+
+		public bool IsUpdatedThisFrame()
+		{
+			return Webcam.didUpdateThisFrame;
 		}
 	}
 }

@@ -51,7 +51,7 @@ namespace BarcodeScanner.Scanner
 		private Action<string, string> Callback;
 		private ParserResult Result;
 
-		public Scanner(IParser parser = null, IWebcam webcam = null)
+		public Scanner(IWebcam webcam = null, IParser parser = null)
 		{
 			// Check Device Authorization
 			if (!Application.HasUserAuthorization(UserAuthorization.WebCam))
@@ -59,13 +59,22 @@ namespace BarcodeScanner.Scanner
 				throw new Exception("This Webcam Library can't work without the webcam authorization");
 			}
 
-			Status = ScannerStatus.Initialize;
 			Parser = (parser == null) ? new ZXingParser() : parser;
 			Camera = (webcam == null) ? new UnityWebcam() : webcam;
 
 			#if UNITY_WEBGL
 			useBackgroundThread = false;
 			#endif
+
+			Camera.OnInitialized += (sender, arg) => {
+				Status = ScannerStatus.Initialize;
+
+				pixels = null;
+				Result = null;
+				Callback = null;
+			};
+
+			Status = ScannerStatus.Initialize;
 		}
 
 		/// <summary>
@@ -94,17 +103,9 @@ namespace BarcodeScanner.Scanner
 		}
 
 		/// <summary>
-		/// Used to Stop Scanning
-		/// </summary>
-		public void Stop()
-		{
-			Stop(false);
-		}
-
-		/// <summary>
 		/// Used to Stop Scanning internaly (can be forced)
 		/// </summary>
-		private void Stop(bool forced)
+		public void Stop(bool forced = false)
 		{
 			if (!forced && Callback == null)
 			{
@@ -267,7 +268,10 @@ namespace BarcodeScanner.Scanner
 				}
 
 				// Get the image as an array of Color32
-				pixels = Camera.GetPixels();
+				if (Camera.IsUpdatedThisFrame())
+				{
+					pixels = Camera.GetPixels();
+				}
 
 				// If background thread OFF, do the decode main thread with 500ms of pause for UI
 				if (!useBackgroundThread && mainThreadLastDecode < Time.realtimeSinceStartup - 0.5f)
