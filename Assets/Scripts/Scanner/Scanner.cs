@@ -189,6 +189,10 @@ namespace BarcodeScanner.Scanner
 		{
 			while (Result == null)
 			{
+				if (pixels == null) {
+					pixels = new Color32[0];
+				}
+
 				// Wait
 				if (Status != ScannerStatus.Running || pixels.Length == 00 || Camera.Width == 0)
 				{
