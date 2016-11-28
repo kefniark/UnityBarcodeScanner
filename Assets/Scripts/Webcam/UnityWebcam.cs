@@ -49,12 +49,12 @@ namespace BarcodeScanner.Webcam
 		{
 			Width = Mathf.RoundToInt(Webcam.width);
 			Height = Mathf.RoundToInt(Webcam.height);
-			Log.Info(string.Format("Camera {2} | Resolution {0}x{1}", Width, Height, Webcam.deviceName));
+			Log.Info(string.Format("Camera: {2} | Resolution: {0}x{1} | Orientation: {3}", Width, Height, Webcam.deviceName, Webcam.videoRotationAngle + ":" +Webcam.videoVerticallyMirrored));
 		}
 
 		public bool IsReady()
 		{
-			return Webcam != null && Webcam.width >= 100;
+			return Webcam != null && Webcam.width >= 100 && Webcam.videoRotationAngle % 90 == 0;
 		}
 
 		public bool IsPlaying()
@@ -93,6 +93,11 @@ namespace BarcodeScanner.Webcam
 				rotation += 180;
 			}
 			return rotation;
+		}
+
+		public int GetCRC()
+		{
+			return (Webcam.width + Webcam.height + Webcam.deviceName + Webcam.videoRotationAngle).GetHashCode();
 		}
 	}
 }

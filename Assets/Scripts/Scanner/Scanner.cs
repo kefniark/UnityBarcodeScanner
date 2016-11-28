@@ -51,6 +51,11 @@ namespace BarcodeScanner.Scanner
 		private Action<string, string> Callback;
 		private ParserResult Result;
 
+		//
+		private int delayFrameWebcamMin = 3;
+		private int delayFrameWebcam = 0;
+		private int lastCRC = -1;
+
 		public Scanner(IParser parser = null, IWebcam webcam = null)
 		{
 			// Check Device Authorization
@@ -239,12 +244,29 @@ namespace BarcodeScanner.Scanner
 				return;
 			}
 
+			// Be sure that the camera metadata is stable (thanks Unity)
+			if (lastCRC != Camera.GetCRC())
+			{
+				lastCRC = Camera.GetCRC();
+				delayFrameWebcam = 0;
+				Log.Info(string.Format("Camera [Resolution:{0}x{1}, Orientation:{2}, IsPlaying:{3}]", Camera.Texture.width, Camera.Texture.height, Camera.GetRotation(), Camera.IsPlaying()));
+				return;
+			}
+
 			// If the app start for the first time (select size & onReady Event)
 			if (Status == ScannerStatus.Initialize)
 			{
+				if (delayFrameWebcam < delayFrameWebcamMin)
+				{
+					delayFrameWebcam++;
+					return;
+				}
+
 				Status = ScannerStatus.Paused;
 
 				Camera.SetSize();
+				delayFrameWebcam = 0;
+
 				if (OnReady != null)
 				{
 					OnReady.Invoke(this, EventArgs.Empty);
