@@ -5,7 +5,6 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-using Wizcorp.Utils.Logger;
 
 public class ContinuousDemo : MonoBehaviour {
 
@@ -22,6 +21,7 @@ public class ContinuousDemo : MonoBehaviour {
 
 		// Display the camera texture through a RawImage
 		BarcodeScanner.OnReady += (sender, arg) => {
+			// Set Orientation & Texture
 			Image.transform.localEulerAngles = new Vector3(0f, 0f, BarcodeScanner.Camera.GetRotation());
 			Image.texture = BarcodeScanner.Camera.Texture;
 			RestartTime = Time.realtimeSinceStartup;
@@ -29,9 +29,7 @@ public class ContinuousDemo : MonoBehaviour {
 			// Keep Image Aspect Ratio
 			var rect = Image.GetComponent<RectTransform>();
 			var newHeight = rect.sizeDelta.x * BarcodeScanner.Camera.Height / BarcodeScanner.Camera.Width;
-			Log.Info("before", rect.sizeDelta);
 			rect.sizeDelta = new Vector2(rect.sizeDelta.x, newHeight);
-			Log.Info("after", rect.sizeDelta);
 		};
 	}
 

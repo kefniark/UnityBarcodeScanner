@@ -15,8 +15,10 @@ namespace Wizcorp.Utils.Logger
 		{
 			services = new List<ILogService>();
 
+			#if UNITY_EDITOR
 			// Console log activate by default in Unity Editor
 			services.Add(new ConsoleService());
+			#endif
 		}
 
 		#region Services

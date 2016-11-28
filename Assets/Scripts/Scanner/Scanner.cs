@@ -226,6 +226,32 @@ namespace BarcodeScanner.Scanner
 		#endregion
 
 		/// <summary>
+		/// Be sure that the camera metadata is stable (thanks Unity) and wait until then (increment delayFrameWebcam)
+		/// </summary>
+		/// <returns></returns>
+		private bool WebcamInitialized()
+		{
+			// If webcam information still change, reset delayFrame
+			if (lastCRC != Camera.GetCRC())
+			{
+				lastCRC = Camera.GetCRC();
+				delayFrameWebcam = 0;
+				return false;
+			}
+
+			// Increment delayFrame
+			if (delayFrameWebcam < delayFrameWebcamMin)
+			{
+				delayFrameWebcam++;
+				return false;
+			}
+
+			Camera.SetSize();
+			delayFrameWebcam = 0;
+			return true;
+		}
+
+		/// <summary>
 		/// This Update Loop is used to :
 		/// * Wait the Camera is really ready
 		/// * Bring back Callback to the main thread when using Background Thread
@@ -244,32 +270,17 @@ namespace BarcodeScanner.Scanner
 				return;
 			}
 
-			// Be sure that the camera metadata is stable (thanks Unity)
-			if (lastCRC != Camera.GetCRC())
-			{
-				lastCRC = Camera.GetCRC();
-				delayFrameWebcam = 0;
-				Log.Info(string.Format("Camera [Resolution:{0}x{1}, Orientation:{2}, IsPlaying:{3}]", Camera.Texture.width, Camera.Texture.height, Camera.GetRotation(), Camera.IsPlaying()));
-				return;
-			}
-
 			// If the app start for the first time (select size & onReady Event)
 			if (Status == ScannerStatus.Initialize)
 			{
-				if (delayFrameWebcam < delayFrameWebcamMin)
+				if (WebcamInitialized())
 				{
-					delayFrameWebcam++;
-					return;
-				}
+					Status = ScannerStatus.Paused;
 
-				Status = ScannerStatus.Paused;
-
-				Camera.SetSize();
-				delayFrameWebcam = 0;
-
-				if (OnReady != null)
-				{
-					OnReady.Invoke(this, EventArgs.Empty);
+					if (OnReady != null)
+					{
+						OnReady.Invoke(this, EventArgs.Empty);
+					}
 				}
 			}
 
