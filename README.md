@@ -1,5 +1,5 @@
 # Unity Barcode Scanner
-[![Build Status](https://travis-ci.org/kefniark/UnityBarcodeScanner.svg?branch=master)](https://travis-ci.org/kefniark/UnityBarcodeScanner)
+![Unity Barcode Scanner Logo](./UnityBarcodeScannerLogo.png) [![Build Status](https://travis-ci.org/kefniark/UnityBarcodeScanner.svg?branch=master)](https://travis-ci.org/kefniark/UnityBarcodeScanner)
 
 Since months, I was looking for a good way to parse QRCodes (and generic barcode) in Unity.
 On the Asset Store, few libraries are already providing that, but they are expensive, overly complex, not tested and not always maintained.
