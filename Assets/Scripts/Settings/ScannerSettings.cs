@@ -26,7 +26,7 @@ namespace BarcodeScanner
 		{
 			ScannerBackgroundThread = true;
 			ScannerDelayFrameMin = 3;
-			ScannerDecodeInterval = 0.2f;
+			ScannerDecodeInterval = 0.1f;
 
 			ParserAutoRotate = true;
 			ParserTryInverted = true;

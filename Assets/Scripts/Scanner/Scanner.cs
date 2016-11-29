@@ -124,6 +124,7 @@ namespace BarcodeScanner.Scanner
 				CodeScannerThread.Abort();
 			}
 			#endif
+
 			Callback = null;
 			Status = ScannerStatus.Paused;
 		}
