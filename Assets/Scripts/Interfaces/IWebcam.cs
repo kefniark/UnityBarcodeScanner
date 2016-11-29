@@ -20,6 +20,6 @@ namespace BarcodeScanner
 		//
 		Color32[] GetPixels();
 		float GetRotation();
-		int GetCRC();
+		int GetChecksum();
 	}
 }
