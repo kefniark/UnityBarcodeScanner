@@ -41,11 +41,12 @@ namespace BarcodeScanner.Scanner
 		}
 
 		// Store information about last image / results (use the update loop to access camera and callback)
-		private Color32[] pixels = new Color32[0];
+		private Color32[] pixels = null;
 		private Action<string, string> Callback;
 		private ParserResult Result;
 
 		//
+		private bool parserPixelAvailable = false;
 		private float mainThreadLastDecode = 0;
 		private int webcamFrameDelayed = 0;
 		private int webcamLastChecksum = -1;
@@ -143,6 +144,7 @@ namespace BarcodeScanner.Scanner
 			Callback = null;
 			Result = null;
 			pixels = null;
+			parserPixelAvailable = false;
 
 			// clean camera
 			Camera.Destroy();
@@ -159,7 +161,7 @@ namespace BarcodeScanner.Scanner
 		public void DecodeQR()
 		{
 			// Wait
-			if (Status != ScannerStatus.Running || pixels.Length == 00 || Camera.Width == 0)
+			if (Status != ScannerStatus.Running || !parserPixelAvailable || Camera.Width == 0)
 			{
 				return;
 			}
@@ -169,7 +171,7 @@ namespace BarcodeScanner.Scanner
 			try
 			{
 				Result = Parser.Decode(pixels, Camera.Width, Camera.Height);
-				pixels = null;
+				parserPixelAvailable = false;
 			}
 			catch (Exception e)
 			{
@@ -192,12 +194,8 @@ namespace BarcodeScanner.Scanner
 		{
 			while (Result == null)
 			{
-				if (pixels == null) {
-					pixels = new Color32[0];
-				}
-
 				// Wait
-				if (Status != ScannerStatus.Running || pixels.Length == 00 || Camera.Width == 0)
+				if (Status != ScannerStatus.Running || !parserPixelAvailable || Camera.Width == 0)
 				{
 					Thread.Sleep(Mathf.FloorToInt(Settings.ScannerDecodeInterval * 1000));
 					continue;
@@ -208,7 +206,7 @@ namespace BarcodeScanner.Scanner
 				try
 				{
 					Result = Parser.Decode(pixels, Camera.Width, Camera.Height);
-					pixels = null;
+					parserPixelAvailable = false;
 
 					// Sleep a little bit and set the signal to get the next frame
 					Thread.Sleep(Mathf.FloorToInt(Settings.ScannerDecodeInterval * 1000));
@@ -295,12 +293,13 @@ namespace BarcodeScanner.Scanner
 
 					// clean and return
 					Result = null;
-					pixels = new Color32[0];
+					parserPixelAvailable = false;
 					return;
 				}
 
 				// Get the image as an array of Color32
-				pixels = Camera.GetPixels();
+				pixels = Camera.GetPixels(pixels);
+				parserPixelAvailable = true;
 
 				// If background thread OFF, do the decode main thread with 500ms of pause for UI
 				if (!Settings.ScannerBackgroundThread && mainThreadLastDecode < Time.realtimeSinceStartup - Settings.ScannerDecodeInterval)

@@ -18,7 +18,7 @@ namespace BarcodeScanner
 		void Destroy();
 
 		//
-		Color32[] GetPixels();
+		Color32[] GetPixels(Color32[] data);
 		float GetRotation();
 		int GetChecksum();
 	}

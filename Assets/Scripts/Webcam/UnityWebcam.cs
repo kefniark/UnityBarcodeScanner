@@ -63,9 +63,13 @@ namespace BarcodeScanner.Webcam
 			}
 		}
 
-		public Color32[] GetPixels()
+		public Color32[] GetPixels(Color32[] data = null)
 		{
-			return Webcam.GetPixels32();
+			if (data == null || data.Length != Webcam.width * Webcam.height)
+			{
+				return Webcam.GetPixels32();
+			}
+			return Webcam.GetPixels32(data);
 		}
 
 		public float GetRotation()
