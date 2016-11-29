@@ -30,7 +30,8 @@ public class SimpleDemo : MonoBehaviour {
 		BarcodeScanner.OnReady += (sender, arg) => {
 			// Set Orientation & Texture
 			Image.transform.localEulerAngles = new Vector3(0f, 0f, BarcodeScanner.Camera.GetRotation());
-			Image.transform.localScale = new Vector2(BarcodeScanner.Camera.IsVerticalyMirrored() ? -Image.transform.localScale.x : Image.transform.localScale.x, Image.transform.localScale.y);
+			float scaleY = BarcodeScanner.Camera.IsVerticalyMirrored() ? -1f : 1f;
+			Image.transform.localScale = new Vector2(Image.transform.localScale.x, scaleY * Image.transform.localScale.y);
 			Image.texture = BarcodeScanner.Camera.Texture;
 
 			// Keep Image Aspect Ratio
