@@ -70,12 +70,12 @@ namespace BarcodeScanner.Webcam
 
 		public float GetRotation()
 		{
-			int rotation = -Webcam.videoRotationAngle;
-			if (Webcam.videoVerticallyMirrored)
-			{
-				rotation += 180;
-			}
-			return rotation;
+			return -Webcam.videoRotationAngle;
+		}
+
+		public bool IsVerticalyMirrored()
+		{
+			return Webcam.videoVerticallyMirrored;
 		}
 
 		public int GetChecksum()

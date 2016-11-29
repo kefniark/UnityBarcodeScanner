@@ -14,6 +14,13 @@ public class ContinuousDemo : MonoBehaviour {
 	public AudioSource Audio;
 	private float RestartTime;
 
+	// Disable Screen Rotation on that screen
+	void Awake()
+	{
+		Screen.autorotateToPortrait = false;
+		Screen.autorotateToPortraitUpsideDown = false;
+	}
+
 	void Start () {
 		// Create a basic scanner
 		BarcodeScanner = new Scanner();
@@ -23,6 +30,7 @@ public class ContinuousDemo : MonoBehaviour {
 		BarcodeScanner.OnReady += (sender, arg) => {
 			// Set Orientation & Texture
 			Image.transform.localEulerAngles = new Vector3(0f, 0f, BarcodeScanner.Camera.GetRotation());
+			Image.transform.localScale = new Vector2(BarcodeScanner.Camera.IsVerticalyMirrored() ? -Image.transform.localScale.x : Image.transform.localScale.x, Image.transform.localScale.y);
 			Image.texture = BarcodeScanner.Camera.Texture;
 			RestartTime = Time.realtimeSinceStartup;
 
