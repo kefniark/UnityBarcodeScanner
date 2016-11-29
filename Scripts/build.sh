@@ -10,4 +10,11 @@ echo "Run Unity Tests"
   -projectPath $(pwd) \
   -quit
 
-exit $?
+RESULT=$?
+if [ "$RESULT" -ne 0 ]; then
+  echo "Build Failed"
+  cat $(pwd)/unity.log
+  cat $(pwd)/EditorTestResults.xml
+fi
+
+exit $RESULT

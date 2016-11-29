@@ -55,7 +55,8 @@ public class ParserTest
 	#region Test Samples
 
 	static object[] ImageSamples = {
-		new object[] {"sample_giant_qr", "september" }
+		new object[] {"sample_giant_qr", "september" },
+		new object[] {"sample_screen_blurry_qr", "http" }
 	};
 
 	[Test, TestCaseSource("ImageSamples")]
