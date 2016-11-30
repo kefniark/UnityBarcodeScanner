@@ -19,7 +19,7 @@ BarcodeScanner = new Scanner();
 // Start playing the camera
 BarcodeScanner.Camera.Play();
 
-// When for the camera to be ready
+// Event when for the camera is ready to scan
 BarcodeScanner.OnReady += (sender, arg) => {
     
     // Bind the Camera texture to any RawImage in your scene

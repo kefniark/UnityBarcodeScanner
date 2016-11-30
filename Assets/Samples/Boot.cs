@@ -8,7 +8,16 @@ using UnityEngine.SceneManagement;
 /// </summary>
 public class Boot : MonoBehaviour
 {
-	public IEnumerator Start()
+	void Awake()
+	{
+		Screen.autorotateToPortrait = true;
+		Screen.autorotateToPortraitUpsideDown = true;
+
+		// Enable vsync for the samples (avoid running mobile device at 300fps)
+		QualitySettings.vSyncCount = 1;
+	}
+
+	IEnumerator Start()
 	{
 		// When the app start, ask for the authorization to use the webcam
 		yield return Application.RequestUserAuthorization(UserAuthorization.WebCam);

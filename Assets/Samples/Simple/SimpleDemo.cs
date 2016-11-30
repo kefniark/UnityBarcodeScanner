@@ -1,11 +1,11 @@
-﻿using UnityEngine;
-using UnityEngine.UI;
-using BarcodeScanner;
+﻿using BarcodeScanner;
 using BarcodeScanner.Scanner;
-using Wizcorp.Utils.Logger;
-using UnityEngine.SceneManagement;
-using System.Collections;
 using System;
+using System.Collections;
+using UnityEngine;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
+using Wizcorp.Utils.Logger;
 
 public class SimpleDemo : MonoBehaviour {
 
@@ -13,6 +13,13 @@ public class SimpleDemo : MonoBehaviour {
 	public Text TextHeader;
 	public RawImage Image;
 	public AudioSource Audio;
+
+	// Disable Screen Rotation on that screen
+	void Awake()
+	{
+		Screen.autorotateToPortrait = false;
+		Screen.autorotateToPortraitUpsideDown = false;
+	}
 
 	void Start () {
 		// Create a basic scanner
@@ -22,7 +29,8 @@ public class SimpleDemo : MonoBehaviour {
 		// Display the camera texture through a RawImage
 		BarcodeScanner.OnReady += (sender, arg) => {
 			// Set Orientation & Texture
-			Image.transform.localEulerAngles = new Vector3(0f, 0f, BarcodeScanner.Camera.GetRotation());
+			Image.transform.localEulerAngles = BarcodeScanner.Camera.GetEulerAngles();
+			Image.transform.localScale = BarcodeScanner.Camera.GetScale();
 			Image.texture = BarcodeScanner.Camera.Texture;
 
 			// Keep Image Aspect Ratio
