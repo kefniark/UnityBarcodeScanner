@@ -4,7 +4,7 @@ Small Barcode Scanner library for Unity
 ## Informations
 **Author**: Kefniark
 
-**Version**: 0.2
+**Version**: 0.3
 
 **Main Repository**: https://github.com/kefniark/UnityBarcodeScanner
 
@@ -19,7 +19,7 @@ BarcodeScanner = new Scanner();
 // Start playing the camera
 BarcodeScanner.Camera.Play();
 
-// When for the camera to be ready
+// Event when for the camera is ready to scan
 BarcodeScanner.OnReady += (sender, arg) => {
     
     // Bind the Camera texture to any RawImage in your scene
@@ -44,7 +44,7 @@ void Update()
 Check the samples to have a better example of how to implement it.
 
 ## API
-** Events **
+**Events**
 ```csharp
 // trigger when the scanner can be used
 event EventHandler OnReady;
@@ -52,7 +52,7 @@ event EventHandler OnReady;
 event EventHandler StatusChanged;
 ```
 
-** Properties **
+**Properties**
 ```csharp
 // Status of the scanner (enum with different values: Initialize, Running, Paused)
 ScannerStatus Status { get; }
@@ -62,7 +62,7 @@ IParser Parser { get; }
 IWebcam Camera { get; }
 ```
 
-** Method **
+**Method**
 ```csharp
 // Start to scan (the callback provide the type and the value of any barcode found)
 void Scan(Action<string, string> Callback);
@@ -75,6 +75,14 @@ void Destroy();
 ```
 
 ## Changes
+
+### 0.3 (30/11/2016)
+* Changed how options are exposed
+* Fixed Aspect Ratio, Rotation & Flip of the RawTexture
+* Improved Logs
+* Improved Performance (lower the amount of GC)
+* Update samples (vsync, disabled auto-rotation)
+* Tested with iOS (iPhone & iPad)
 
 ### 0.2 (24/09/2016)
 * Implement Basic Samples

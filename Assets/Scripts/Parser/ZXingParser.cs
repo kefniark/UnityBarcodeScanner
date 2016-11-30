@@ -9,15 +9,16 @@ namespace BarcodeScanner.Parser
 	{
 		public BarcodeReader Scanner { get; private set; }
 
-		public ZXingParser()
+		public ZXingParser() : this(new ScannerSettings())
+		{
+		}
+
+		public ZXingParser(ScannerSettings settings)
 		{
 			Scanner = new BarcodeReader();
-			Scanner.AutoRotate = true;
-			Scanner.TryInverted = true;
-
-			#if UNITY_STANDALONE || UNITY_EDITOR
-			Scanner.Options.TryHarder = true;
-			#endif
+			Scanner.AutoRotate = settings.ParserAutoRotate;
+			Scanner.TryInverted = settings.ParserTryInverted;
+			Scanner.Options.TryHarder = settings.ParserTryHarder;
 		}
 
 		/// <summary>

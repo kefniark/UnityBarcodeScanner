@@ -14,6 +14,13 @@ public class ContinuousDemo : MonoBehaviour {
 	public AudioSource Audio;
 	private float RestartTime;
 
+	// Disable Screen Rotation on that screen
+	void Awake()
+	{
+		Screen.autorotateToPortrait = false;
+		Screen.autorotateToPortraitUpsideDown = false;
+	}
+
 	void Start () {
 		// Create a basic scanner
 		BarcodeScanner = new Scanner();
@@ -21,8 +28,16 @@ public class ContinuousDemo : MonoBehaviour {
 
 		// Display the camera texture through a RawImage
 		BarcodeScanner.OnReady += (sender, arg) => {
-			Image.transform.localEulerAngles = new Vector3(0f, 0f, BarcodeScanner.Camera.GetRotation());
+			// Set Orientation & Texture
+			Image.transform.localEulerAngles = BarcodeScanner.Camera.GetEulerAngles();
+			Image.transform.localScale = BarcodeScanner.Camera.GetScale();
 			Image.texture = BarcodeScanner.Camera.Texture;
+
+			// Keep Image Aspect Ratio
+			var rect = Image.GetComponent<RectTransform>();
+			var newHeight = rect.sizeDelta.x * BarcodeScanner.Camera.Height / BarcodeScanner.Camera.Width;
+			rect.sizeDelta = new Vector2(rect.sizeDelta.x, newHeight);
+
 			RestartTime = Time.realtimeSinceStartup;
 		};
 	}
