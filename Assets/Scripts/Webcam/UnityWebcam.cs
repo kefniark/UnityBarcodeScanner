@@ -78,6 +78,16 @@ namespace BarcodeScanner.Webcam
 			return Webcam.videoVerticallyMirrored;
 		}
 
+		public Vector3 GetEulerAngles()
+		{
+			return new Vector3(0f, 0f, GetRotation());
+		}
+
+		public Vector3 GetScale()
+		{
+			return new Vector3(1, IsVerticalyMirrored() ? -1f : 1f, 1);
+		}
+
 		public int GetChecksum()
 		{
 			return (Webcam.width + Webcam.height + Webcam.deviceName + Webcam.videoRotationAngle).GetHashCode();

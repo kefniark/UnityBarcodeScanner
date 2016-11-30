@@ -29,16 +29,16 @@ public class ContinuousDemo : MonoBehaviour {
 		// Display the camera texture through a RawImage
 		BarcodeScanner.OnReady += (sender, arg) => {
 			// Set Orientation & Texture
-			Image.transform.localEulerAngles = new Vector3(0f, 0f, BarcodeScanner.Camera.GetRotation());
-			float scaleY = BarcodeScanner.Camera.IsVerticalyMirrored() ? -1f : 1f;
-			Image.transform.localScale = new Vector2(Image.transform.localScale.x, scaleY * Image.transform.localScale.y);
+			Image.transform.localEulerAngles = BarcodeScanner.Camera.GetEulerAngles();
+			Image.transform.localScale = BarcodeScanner.Camera.GetScale();
 			Image.texture = BarcodeScanner.Camera.Texture;
-			RestartTime = Time.realtimeSinceStartup;
 
 			// Keep Image Aspect Ratio
 			var rect = Image.GetComponent<RectTransform>();
 			var newHeight = rect.sizeDelta.x * BarcodeScanner.Camera.Height / BarcodeScanner.Camera.Width;
 			rect.sizeDelta = new Vector2(rect.sizeDelta.x, newHeight);
+
+			RestartTime = Time.realtimeSinceStartup;
 		};
 	}
 

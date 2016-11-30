@@ -21,6 +21,8 @@ namespace BarcodeScanner
 		Color32[] GetPixels();
 		float GetRotation();
 		bool IsVerticalyMirrored();
+		Vector3 GetEulerAngles();
+		Vector3 GetScale();
 		int GetChecksum();
 	}
 }

@@ -12,6 +12,9 @@ public class Boot : MonoBehaviour
 	{
 		Screen.autorotateToPortrait = true;
 		Screen.autorotateToPortraitUpsideDown = true;
+
+		// Enable vsync for the samples (avoid running mobile device at 300fps)
+		QualitySettings.vSyncCount = 1;
 	}
 
 	IEnumerator Start()
