@@ -90,6 +90,10 @@ namespace BarcodeScanner.Scanner
 			#if !UNITY_WEBGL
 			if (Settings.ScannerBackgroundThread)
 			{
+				if (CodeScannerThread != null)
+				{
+					Stop(true);
+				}
 				CodeScannerThread = new Thread(ThreadDecodeQR);
 				CodeScannerThread.Start();
 			}
@@ -121,6 +125,7 @@ namespace BarcodeScanner.Scanner
 			if (CodeScannerThread != null)
 			{
 				CodeScannerThread.Abort();
+				CodeScannerThread = null;
 			}
 			#endif
 
