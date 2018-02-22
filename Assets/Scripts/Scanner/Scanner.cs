@@ -212,6 +212,8 @@ namespace BarcodeScanner.Scanner
 					// Sleep a little bit and set the signal to get the next frame
 					Thread.Sleep(Mathf.FloorToInt(Settings.ScannerDecodeInterval * 1000));
 				}
+                catch (ThreadAbortException)
+                { }
 				catch (Exception e)
 				{
 					Log.Error(e);
