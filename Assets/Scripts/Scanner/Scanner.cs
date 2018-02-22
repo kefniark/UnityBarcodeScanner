@@ -50,9 +50,10 @@ namespace BarcodeScanner.Scanner
 		private float mainThreadLastDecode = 0;
 		private int webcamFrameDelayed = 0;
 		private int webcamLastChecksum = -1;
+		private bool decodeInterrupted = true;
 
 		public Scanner() : this(null, null, null) { }
-		public Scanner(ScannerSettings settings) : this (settings, null, null) {}
+		public Scanner(ScannerSettings settings) : this(settings, null, null) {}
 		public Scanner(IParser parser, IWebcam webcam) : this(null, parser, webcam) {}
 
 		public Scanner(ScannerSettings settings, IParser parser, IWebcam webcam)
@@ -68,7 +69,7 @@ namespace BarcodeScanner.Scanner
 			// Default Properties
 			Settings = (settings == null) ? new ScannerSettings() : settings;
 			Parser = (parser == null) ? new ZXingParser(Settings) : parser;
-			Camera = (webcam == null) ? new UnityWebcam(Settings): webcam;
+			Camera = (webcam == null) ? new UnityWebcam(Settings) : webcam;
 		}
 
 		/// <summary>
@@ -94,6 +95,8 @@ namespace BarcodeScanner.Scanner
 				{
 					Stop(true);
 				}
+
+				decodeInterrupted = false;
 				CodeScannerThread = new Thread(ThreadDecodeQR);
 				CodeScannerThread.Start();
 			}
@@ -124,7 +127,8 @@ namespace BarcodeScanner.Scanner
 			#if !UNITY_WEBGL
 			if (CodeScannerThread != null)
 			{
-				CodeScannerThread.Abort();
+				decodeInterrupted = true;
+				CodeScannerThread.Join();
 				CodeScannerThread = null;
 			}
 			#endif
@@ -197,7 +201,7 @@ namespace BarcodeScanner.Scanner
 		/// </summary>
 		public void ThreadDecodeQR()
 		{
-			while (Result == null)
+			while (decodeInterrupted == false && Result == null)
 			{
 				// Wait
 				if (Status != ScannerStatus.Running || !parserPixelAvailable || Camera.Width == 0)
@@ -212,6 +216,10 @@ namespace BarcodeScanner.Scanner
 				{
 					Result = Parser.Decode(pixels, Camera.Width, Camera.Height);
 					parserPixelAvailable = false;
+					if (Result == null)
+					{
+						continue;
+					}
 
 					// Sleep a little bit and set the signal to get the next frame
 					Thread.Sleep(Mathf.FloorToInt(Settings.ScannerDecodeInterval * 1000));
