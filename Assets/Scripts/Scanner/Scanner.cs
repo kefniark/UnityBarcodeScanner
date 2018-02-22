@@ -1,4 +1,4 @@
-﻿using BarcodeScanner.Parser;
+using BarcodeScanner.Parser;
 using BarcodeScanner.Webcam;
 using System;
 using UnityEngine;
@@ -50,7 +50,6 @@ namespace BarcodeScanner.Scanner
 		private float mainThreadLastDecode = 0;
 		private int webcamFrameDelayed = 0;
 		private int webcamLastChecksum = -1;
-
 
 		public Scanner() : this(null, null, null) { }
 		public Scanner(ScannerSettings settings) : this (settings, null, null) {}
@@ -212,8 +211,7 @@ namespace BarcodeScanner.Scanner
 					// Sleep a little bit and set the signal to get the next frame
 					Thread.Sleep(Mathf.FloorToInt(Settings.ScannerDecodeInterval * 1000));
 				}
-                catch (ThreadAbortException)
-                { }
+				catch (ThreadAbortException) { }
 				catch (Exception e)
 				{
 					Log.Error(e);
