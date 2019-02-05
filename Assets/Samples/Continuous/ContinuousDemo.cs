@@ -5,6 +5,7 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using System.Text;
 
 public class ContinuousDemo : MonoBehaviour {
 
@@ -13,6 +14,9 @@ public class ContinuousDemo : MonoBehaviour {
 	public RawImage Image;
 	public AudioSource Audio;
 	private float RestartTime;
+
+	public int resWidth = 2550; 
+    public int resHeight = 3300;
 
 	// Disable Screen Rotation on that screen
 	void Awake()
@@ -62,6 +66,29 @@ public class ContinuousDemo : MonoBehaviour {
 			#if UNITY_ANDROID || UNITY_IOS
 			Handheld.Vibrate();
 			#endif
+
+			RenderTexture rt = new RenderTexture(resWidth, resHeight, 24);
+			Camera camera = this.GetComponent<Camera>();
+            camera.targetTexture = rt;
+            Texture2D screenShot = new Texture2D(resWidth, resHeight, TextureFormat.RGB24, false);
+            camera.Render();
+            RenderTexture.active = rt;
+            screenShot.ReadPixels(new Rect(0, 0, resWidth, resHeight), 0, 0);
+            camera.targetTexture = null;
+            RenderTexture.active = null; // JC: added to avoid errors
+            Destroy(rt);
+            //byte[] bytes = screenShot.EncodeToPNG();
+            string time = System.DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss");
+			string screenshotFileName = string.Format("{0}/captures/screen_{1}x{2}_{3}.png", 
+                            				Application.dataPath, 
+                            				resWidth, resHeight, 
+                            				time);
+			string dataFileName = string.Format("{0}/captures/data_{3}.txt", 
+                            		Application.dataPath, 
+                           			time);
+            System.IO.File.WriteAllBytes(screenshotFileName, screenShot.EncodeToPNG());
+			System.IO.File.WriteAllBytes(dataFileName, Encoding.ASCII.GetBytes(TextHeader.text));
+            Debug.Log(string.Format("Took screenshot to: {0}, {1}", screenshotFileName, dataFileName));
 		});
 	}
 
