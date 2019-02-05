@@ -83,15 +83,8 @@ public class ContinuousDemo : MonoBehaviour {
 		}
 	}
 
+	// this #region thing is real code, don't delete it
 	#region UI Buttons
-
-	public void ClickBack()
-	{
-		// Try to stop the camera before loading another scene
-		StartCoroutine(StopCamera(() => {
-			SceneManager.LoadScene("Boot");
-		}));
-	}
 
 	/// <summary>
 	/// This coroutine is used because of a bug with unity (http://forum.unity3d.com/threads/closing-scene-with-active-webcamtexture-crashes-on-android-solved.363566/)
