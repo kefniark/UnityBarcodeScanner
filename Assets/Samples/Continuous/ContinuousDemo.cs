@@ -53,18 +53,15 @@ public class ContinuousDemo : MonoBehaviour {
 	{
 		BarcodeScanner.Scan((barCodeType, barCodeValue) => {
 			BarcodeScanner.Stop();
-			if (TextHeader.text.Length > 250)
-			{
-				TextHeader.text = "";
-			}
-			TextHeader.text += "Found: " + barCodeType + " / " + barCodeValue + "\n";
-			RestartTime += Time.realtimeSinceStartup + 1f;
+
+			// wait 2 seconds till next scan
+			RestartTime += Time.realtimeSinceStartup + 2f;
 
 			// Feedback
 			Audio.Play();
 
 			#if UNITY_ANDROID || UNITY_IOS
-			Handheld.Vibrate();
+			//Handheld.Vibrate();
 			#endif
 
 			RenderTexture rt = new RenderTexture(resWidth, resHeight, 24);
@@ -83,12 +80,18 @@ public class ContinuousDemo : MonoBehaviour {
                             				Application.dataPath, 
                             				resWidth, resHeight, 
                             				time);
-			string dataFileName = string.Format("{0}/captures/data_{3}.txt", 
+			string dataFileName = string.Format("{0}/captures/data_{1}.txt", 
                             		Application.dataPath, 
                            			time);
             System.IO.File.WriteAllBytes(screenshotFileName, screenShot.EncodeToPNG());
-			System.IO.File.WriteAllBytes(dataFileName, Encoding.ASCII.GetBytes(TextHeader.text));
+			System.IO.File.WriteAllBytes(dataFileName, Encoding.ASCII.GetBytes("Found: " + barCodeType + " / " + barCodeValue + "\n"));
             Debug.Log(string.Format("Took screenshot to: {0}, {1}", screenshotFileName, dataFileName));
+
+			if (TextHeader.text.Length > 250)
+			{
+				TextHeader.text = "";
+			}
+			TextHeader.text += "Filename" + screenshotFileName + "\n";
 		});
 	}
 
