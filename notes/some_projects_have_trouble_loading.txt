@@ -1,0 +1,2 @@
+go here: https://code.visualstudio.com/docs/other/unity
+it says to install mono from here: https://www.mono-project.com/download/stable/

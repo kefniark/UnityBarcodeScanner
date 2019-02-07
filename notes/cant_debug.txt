@@ -1,0 +1,38 @@
+here it tells you how to connect to device https://forum.unity.com/threads/attaching-monodevelop-debugger-to-an-android-device.245814/
+
+didn't get this to work
+
+debugging unity is VERY complex
+it happens over wifi
+it debugs the assembly output from the csharp over wifi
+
+i got logcat to work
+so printf debugging (also general errors are logged in logcat)
+
+go find the Android Sdk location 
+(on linux its ~/Android/Sdk. on mac is aparently  ~/Library/Android/sdk)
+
+go here in android studio if you can't find it:
+File -> Other settings -> Default Project Structure menu invokes dialog box where you can see Android SDK Location.
+
+or go here if you still can't find it
+https://gamedev.stackexchange.com/questions/93209/how-would-i-find-the-sdk-folder-for-android-studio-so-i-can-build-my-unity-proje
+
+
+
+here is some terminal output for logcat
+
+
+    ~/Android/Sdk/platform-tools $ ./adb logcat -s Unity
+    adb server version (36) doesn't match this client (40); killing...
+    * daemon started successfully
+    --------- beginning of main
+    --------- beginning of system
+
+
+so adb is in platform-tools in the SDK location
+
+now you have a low-key debugger
+
+
+
