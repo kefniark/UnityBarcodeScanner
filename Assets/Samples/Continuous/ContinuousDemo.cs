@@ -1,6 +1,7 @@
 ﻿using BarcodeScanner;
 using BarcodeScanner.Scanner;
 using System;
+using System.IO;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -76,22 +77,28 @@ public class ContinuousDemo : MonoBehaviour {
             Destroy(rt);
             //byte[] bytes = screenShot.EncodeToPNG();
             string time = System.DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss");
-			string screenshotFileName = string.Format("{0}/captures/screen_{1}x{2}_{3}.png", 
-                            				Application.dataPath, 
+			string folderName = string.Format("{0}/captures", 
+                            				Application.persistentDataPath);
+			string screenshotFileName = string.Format("{0}/screen_{1}x{2}_{3}.png", 
+                            				folderName, 
                             				resWidth, resHeight, 
                             				time);
-			string dataFileName = string.Format("{0}/captures/data_{1}.txt", 
-                            		Application.dataPath, 
+			string dataFileName = string.Format("{0}/data_{1}.txt", 
+                            		folderName, 
                            			time);
+			if(!Directory.Exists(folderName)){
+				Directory.CreateDirectory(folderName);
+			}
+
             System.IO.File.WriteAllBytes(screenshotFileName, screenShot.EncodeToPNG());
 			System.IO.File.WriteAllBytes(dataFileName, Encoding.ASCII.GetBytes("Found: " + barCodeType + " / " + barCodeValue + "\n"));
-            Debug.Log(string.Format("Took screenshot to: {0}, {1}", screenshotFileName, dataFileName));
+           	Debug.Log(string.Format("Took screenshot to: {0}, {1}", screenshotFileName, dataFileName));
 
 			if (TextHeader.text.Length > 250)
 			{
 				TextHeader.text = "";
 			}
-			TextHeader.text += "Filename" + screenshotFileName + "\n";
+			TextHeader.text += "Filename " + screenshotFileName + "\n";
 		});
 	}
 
