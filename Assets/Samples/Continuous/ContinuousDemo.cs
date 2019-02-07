@@ -16,8 +16,8 @@ public class ContinuousDemo : MonoBehaviour {
 	public AudioSource Audio;
 	private float RestartTime;
 
-	public int resWidth = 2550; 
-    public int resHeight = 3300;
+	public int resWidth = Screen.width;
+    public int resHeight = Screen.height;
 
 	// Disable Screen Rotation on that screen
 	void Awake()
