@@ -18,6 +18,6 @@ namespace BarcodeScanner
 		void Stop();
 		void Update();
 		void Destroy();
-
+		void TakeScreenshot(string path);
 	}
 }

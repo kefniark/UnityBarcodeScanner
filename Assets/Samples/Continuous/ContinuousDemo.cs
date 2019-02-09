@@ -7,6 +7,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using System.Text;
+using System.Linq;
 
 public class ContinuousDemo : MonoBehaviour {
 
@@ -27,6 +28,7 @@ public class ContinuousDemo : MonoBehaviour {
 	}
 
 	void Start () {
+		QualitySettings.SetQualityLevel(1, false);
 		// Create a basic scanner
 		BarcodeScanner = new Scanner();
 		BarcodeScanner.Camera.Play();
@@ -90,7 +92,8 @@ public class ContinuousDemo : MonoBehaviour {
 				Directory.CreateDirectory(folderName);
 			}
 
-            System.IO.File.WriteAllBytes(screenshotFileName, screenShot.EncodeToPNG());
+            BarcodeScanner.TakeScreenshot(screenshotFileName);
+		 	//System.IO.File.WriteAllBytes(screenshotFileName, screenShot.EncodeToPNG());
 			System.IO.File.WriteAllBytes(dataFileName, Encoding.ASCII.GetBytes("Found: " + barCodeType + " / " + barCodeValue + "\n"));
            	Debug.Log(string.Format("Took screenshot to: {0}, {1}", screenshotFileName, dataFileName));
 

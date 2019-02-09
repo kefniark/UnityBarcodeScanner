@@ -161,6 +161,19 @@ namespace BarcodeScanner.Scanner
 			Parser = null;
 		}
 
+		public void TakeScreenshot(string path)
+		{
+			if (WebcamInitialized())
+			{
+				Log.Info("taking a screen shot (inside scanner.cs)");
+				Camera.TakeScreenshot(path);
+			}
+			else
+			{
+				Log.Info("not taking a screen shot (inside scanner.cs) because camera not initialized");
+			}
+		}
+
 		#region Unthread
 
 		/// <summary>

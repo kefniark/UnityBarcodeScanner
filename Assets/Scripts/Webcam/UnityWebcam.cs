@@ -1,5 +1,8 @@
 ﻿using UnityEngine;
 using Wizcorp.Utils.Logger;
+using System;
+using System.IO;
+using UnityEngine;
 
 namespace BarcodeScanner.Webcam
 {
@@ -95,6 +98,16 @@ namespace BarcodeScanner.Webcam
 		public int GetChecksum()
 		{
 			return (Webcam.width + Webcam.height + Webcam.deviceName + Webcam.videoRotationAngle).GetHashCode();
+		}
+
+		public void TakeScreenshot(string path)
+		{
+			Debug.Log("inside webcam taking screenshot\n");
+			Texture2D snap = new Texture2D(Webcam.width, Webcam.height);
+			snap.SetPixels(Webcam.GetPixels());
+			snap.Apply();
+			System.IO.File.WriteAllBytes(path, snap.EncodeToPNG());
+			Debug.Log("blahb blah\n");
 		}
 
 		public override string ToString()

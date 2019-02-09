@@ -24,5 +24,6 @@ namespace BarcodeScanner
 		Vector3 GetEulerAngles();
 		Vector3 GetScale();
 		int GetChecksum();
-	}
+        void TakeScreenshot(string path);
+    }
 }
