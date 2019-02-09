@@ -92,8 +92,7 @@ public class ContinuousDemo : MonoBehaviour {
 				Directory.CreateDirectory(folderName);
 			}
 
-            BarcodeScanner.TakeScreenshot(screenshotFileName);
-		 	//System.IO.File.WriteAllBytes(screenshotFileName, screenShot.EncodeToPNG());
+		 	System.IO.File.WriteAllBytes(screenshotFileName, BarcodeScanner.TakeScreenshot().EncodeToPNG());
 			System.IO.File.WriteAllBytes(dataFileName, Encoding.ASCII.GetBytes("Found: " + barCodeType + " / " + barCodeValue + "\n"));
            	Debug.Log(string.Format("Took screenshot to: {0}, {1}", screenshotFileName, dataFileName));
 

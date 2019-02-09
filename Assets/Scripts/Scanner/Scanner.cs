@@ -3,6 +3,7 @@ using BarcodeScanner.Webcam;
 using System;
 using UnityEngine;
 using Wizcorp.Utils.Logger;
+using UnityEngine;
 
 #if !UNITY_WEBGL
 using System.Threading;
@@ -161,17 +162,9 @@ namespace BarcodeScanner.Scanner
 			Parser = null;
 		}
 
-		public void TakeScreenshot(string path)
+		public Texture2D TakeScreenshot()
 		{
-			if (WebcamInitialized())
-			{
-				Log.Info("taking a screen shot (inside scanner.cs)");
-				Camera.TakeScreenshot(path);
-			}
-			else
-			{
-				Log.Info("not taking a screen shot (inside scanner.cs) because camera not initialized");
-			}
+			return Camera.TakeScreenshot();
 		}
 
 		#region Unthread
