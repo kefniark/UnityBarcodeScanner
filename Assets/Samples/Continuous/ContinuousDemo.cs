@@ -18,7 +18,7 @@ public class ContinuousDemo : MonoBehaviour {
 	private float RestartTime;
 
 	public int resWidth = Screen.width;
-    public int resHeight = Screen.height;
+        public int resHeight = Screen.height;
 
 	// Disable Screen Rotation on that screen
 	void Awake()
@@ -28,7 +28,8 @@ public class ContinuousDemo : MonoBehaviour {
 	}
 
 	void Start () {
-		QualitySettings.SetQualityLevel(1, false);
+		//QualitySettings.SetQualityLevel(1, false);
+		
 		// Create a basic scanner
 		BarcodeScanner = new Scanner();
 		BarcodeScanner.Camera.Play();
