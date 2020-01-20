@@ -4,8 +4,6 @@
 **IMPORTANT: This Project is not supported anymore !!!** [Link](https://github.com/kefniark/UnityBarcodeScanner/issues/48)
 
 Since months, I was looking for a good way to parse QRCodes (and generic barcode) in Unity.
-On the Asset Store, few libraries are already providing that, but they are expensive, overly complex, not tested and not always maintained.
-
 So, I was just trying to do something simple, readable, cross-platform and open source.
 * Tested with Unity `5.3.x`, `5.4.x`, `5.5.x` , `2017.3.x`
 * Tested on `PC`, `Mac`, `Android`, `iOS`, `WebGL`
