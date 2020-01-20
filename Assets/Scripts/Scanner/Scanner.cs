@@ -4,7 +4,9 @@ using System;
 using UnityEngine;
 using Wizcorp.Utils.Logger;
 
-#if !UNITY_WEBGL
+#if WINDOWS_UWP
+using System.Threading.Tasks;
+#elif !UNITY_WEBGL
 using System.Threading;
 #endif
 
@@ -88,7 +90,19 @@ namespace BarcodeScanner.Scanner
 			Log.Info(this + " SimpleScanner -> Start Scan");
 			Status = ScannerStatus.Running;
 
-			#if !UNITY_WEBGL
+			#if WINDOWS_UWP
+			if (Settings.ScannerBackgroundThread)
+			{
+				if (CodeScannerThread != null)
+				{
+					Stop(true);
+				}
+
+				decodeInterrupted = false;
+				CodeScannerThread = new Task(TaskDecodeQR);
+				CodeScannerThread.Start();
+			}
+			#elif !UNITY_WEBGL
 			if (Settings.ScannerBackgroundThread)
 			{
 				if (CodeScannerThread != null)
@@ -124,7 +138,14 @@ namespace BarcodeScanner.Scanner
 
 			// Stop thread / Clean callback
 			Log.Info(this + " SimpleScanner -> Stop Scan");
-			#if !UNITY_WEBGL
+			#if WINDOWS_UWP
+			if (CodeScannerThread != null)
+			{
+				decodeInterrupted = true;
+				CodeScannerThread.Wait();
+				CodeScannerThread = null;
+			}
+			#elif !UNITY_WEBGL
 			if (CodeScannerThread != null)
 			{
 				decodeInterrupted = true;
@@ -190,9 +211,47 @@ namespace BarcodeScanner.Scanner
 
 		#endregion
 
-		#region Background Thread
+		#region Background Thread & Task
 
-		#if !UNITY_WEBGL
+#if WINDOWS_UWP
+		private Task CodeScannerThread;
+
+		/// <summary>
+		/// Process Image Decoding in a Background Task
+		/// </summary>
+		public async void TaskDecodeQR()
+		{
+			while (decodeInterrupted == false && Result == null)
+			{
+				// Wait
+				if (Status != ScannerStatus.Running || !parserPixelAvailable || Camera.Width == 0)
+				{
+					await Task.Delay(Mathf.FloorToInt(Settings.ScannerDecodeInterval * 1000));
+					continue;
+				}
+
+				// Process
+				Log.Debug(this + " SimpleScanner -> Scan ... " + Camera.Width + " / " + Camera.Height);
+				try
+				{
+					Result = Parser.Decode(pixels, Camera.Width, Camera.Height);
+					parserPixelAvailable = false;
+					if (Result == null)
+					{
+						continue;
+					}
+
+					// Sleep a little bit and set the signal to get the next frame
+					await Task.Delay(Mathf.FloorToInt(Settings.ScannerDecodeInterval * 1000));
+				}
+				catch (Exception e)
+				{
+					Log.Error(e);
+				}
+			}
+		}
+
+#elif !UNITY_WEBGL
 		private Thread CodeScannerThread;
 
 		/// <summary>
@@ -231,7 +290,7 @@ namespace BarcodeScanner.Scanner
 				}
 			}
 		}
-		#endif
+#endif
 
 		#endregion
 
