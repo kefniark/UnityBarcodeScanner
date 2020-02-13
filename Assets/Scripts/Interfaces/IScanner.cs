@@ -1,5 +1,6 @@
 ﻿using BarcodeScanner.Scanner;
 using System;
+using UnityEngine;
 
 namespace BarcodeScanner
 {
@@ -18,6 +19,6 @@ namespace BarcodeScanner
 		void Stop();
 		void Update();
 		void Destroy();
-
+		Texture2D TakeScreenshot();
 	}
 }

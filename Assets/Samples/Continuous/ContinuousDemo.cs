@@ -1,10 +1,13 @@
 ﻿using BarcodeScanner;
 using BarcodeScanner.Scanner;
 using System;
+using System.IO;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using System.Text;
+using System.Linq;
 
 public class ContinuousDemo : MonoBehaviour {
 
@@ -14,6 +17,9 @@ public class ContinuousDemo : MonoBehaviour {
 	public AudioSource Audio;
 	private float RestartTime;
 
+	public int resWidth = Screen.width;
+        public int resHeight = Screen.height;
+
 	// Disable Screen Rotation on that screen
 	void Awake()
 	{
@@ -22,6 +28,8 @@ public class ContinuousDemo : MonoBehaviour {
 	}
 
 	void Start () {
+		//QualitySettings.SetQualityLevel(1, false);
+		
 		// Create a basic scanner
 		BarcodeScanner = new Scanner();
 		BarcodeScanner.Camera.Play();
@@ -49,12 +57,9 @@ public class ContinuousDemo : MonoBehaviour {
 	{
 		BarcodeScanner.Scan((barCodeType, barCodeValue) => {
 			BarcodeScanner.Stop();
-			if (TextHeader.text.Length > 250)
-			{
-				TextHeader.text = "";
-			}
-			TextHeader.text += "Found: " + barCodeType + " / " + barCodeValue + "\n";
-			RestartTime += Time.realtimeSinceStartup + 1f;
+
+			// wait 2 seconds till next scan
+			RestartTime += Time.realtimeSinceStartup + 2f;
 
 			// Feedback
 			Audio.Play();
@@ -62,6 +67,40 @@ public class ContinuousDemo : MonoBehaviour {
 			#if UNITY_ANDROID || UNITY_IOS
 			Handheld.Vibrate();
 			#endif
+
+			RenderTexture rt = new RenderTexture(resWidth, resHeight, 24);
+			Camera camera = this.GetComponent<Camera>();
+                        camera.targetTexture = rt;
+                        Texture2D screenShot = new Texture2D(resWidth, resHeight, TextureFormat.RGB24, false);
+                        camera.Render();
+                        RenderTexture.active = rt;
+                        screenShot.ReadPixels(new Rect(0, 0, resWidth, resHeight), 0, 0);
+                        camera.targetTexture = null;
+                        RenderTexture.active = null; // JC: added to avoid errors
+                        Destroy(rt);
+            
+                        string time = System.DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss");
+			string folderName = string.Format("{0}/captures", 
+                            				Application.persistentDataPath);
+			string screenshotFileName = string.Format("{0}/screen_{1}x{2}_{3}.png", 
+                            				folderName, 
+                            				resWidth, resHeight, 
+                            				time);
+			string dataFileName = string.Format("{0}/data_{1}.txt", 
+                            		folderName, 
+                           			time);
+			if(!Directory.Exists(folderName)){
+				Directory.CreateDirectory(folderName);
+			}
+
+		 	System.IO.File.WriteAllBytes(screenshotFileName, BarcodeScanner.TakeScreenshot().EncodeToPNG());
+			System.IO.File.WriteAllBytes(dataFileName, Encoding.ASCII.GetBytes("Found: " + barCodeType + " / " + barCodeValue + "\n"));
+
+			if (TextHeader.text.Length > 250)
+			{
+				TextHeader.text = "";
+			}
+			TextHeader.text += "Filename " + screenshotFileName + "\n";
 		});
 	}
 
@@ -83,15 +122,8 @@ public class ContinuousDemo : MonoBehaviour {
 		}
 	}
 
+	// this #region thing is real code, don't delete it
 	#region UI Buttons
-
-	public void ClickBack()
-	{
-		// Try to stop the camera before loading another scene
-		StartCoroutine(StopCamera(() => {
-			SceneManager.LoadScene("Boot");
-		}));
-	}
 
 	/// <summary>
 	/// This coroutine is used because of a bug with unity (http://forum.unity3d.com/threads/closing-scene-with-active-webcamtexture-crashes-on-android-solved.363566/)

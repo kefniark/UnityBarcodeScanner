@@ -1,0 +1,13 @@
+error in console:
+
+CommandInvokationFailure: Unable to forward network traffic to device. Please make sure the Android SDK is installed and is properly configured in the Editor. See the Console for more details.
+/home/sam/Android/Sdk/platform-tools/adb -s "9caa40c4" forward "tcp:34999" "localabstract:Unity-com.ganbaranai.BarcodeScanner"
+
+possible solution:
+close unity and run /home/sam/Android/Sdk/platform-tools/adb -s "9caa40c4" forward "tcp:34999" "localabstract:Unity-com.ganbaranai.BarcodeScanner"
+then open unity
+
+solution found here:https://answers.unity.com/questions/1379232/android-error-cannot-bind-listener-address-already.html
+it worked!
+
+added it ~/.bashrc

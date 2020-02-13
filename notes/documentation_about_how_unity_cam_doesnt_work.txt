@@ -1,0 +1,2 @@
+https://answers.unity.com/questions/384734/how-to-take-a-photo-from-a-webcam.html
+you need natcam to work

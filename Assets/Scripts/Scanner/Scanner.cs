@@ -3,6 +3,7 @@ using BarcodeScanner.Webcam;
 using System;
 using UnityEngine;
 using Wizcorp.Utils.Logger;
+using UnityEngine;
 
 #if !UNITY_WEBGL
 using System.Threading;
@@ -159,6 +160,11 @@ namespace BarcodeScanner.Scanner
 			Camera.Destroy();
 			Camera = null;
 			Parser = null;
+		}
+
+		public Texture2D TakeScreenshot()
+		{
+			return Camera.TakeScreenshot();
 		}
 
 		#region Unthread

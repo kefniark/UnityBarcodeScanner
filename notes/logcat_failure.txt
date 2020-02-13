@@ -1,0 +1,5 @@
+~/Android/Sdk/platform-tools $ ./adb logcat -s Unity
+- waiting for device -
+error: more than one device/emulator
+
+
